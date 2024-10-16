@@ -224,7 +224,7 @@ CREATE TABLE `tp_good` (
   `is_del` int DEFAULT '1' COMMENT '0: available 1: not available', --[UPDATE ORIGN isdel]
   `low_stock_alert` int unsigned DEFAULT '0' COMMENT 'alert show in admin panel when the item qty reach the number',
   `desc` text COMMENT 'good description in json format',
-  `is_recommanded` tinyint unsigned DEFAULT '0' COMMENT 'good is recommend on the home page', --[UPDATE ORIGN isHomeRecommand]
+  `is_recommended` tinyint unsigned DEFAULT '0' COMMENT 'good is recommend on the home page', --[UPDATE ORIGN isHomeRecommand]
   `sku_id` varchar(45) DEFAULT NULL COMMENT 'main good sku id',
   `is_new` tinyint NOT NULL DEFAULT '0' COMMENT 'is new item',
   `is_variation` varchar(100) NOT NULL DEFAULT 'false' COMMENT 'muti type item', --[UPDATE ORIGN isVariationPresent]

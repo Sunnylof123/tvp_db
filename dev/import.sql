@@ -34,19 +34,6 @@ CREATE TABLE `tp_banner` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
-DROP TABLE IF EXISTS `tp_cart`;
-CREATE TABLE `tp_cart` (
-  `id` int NOT NULL AUTO_INCREMENT , 
-  `user_id` int NOT NULL COMMENT 'user id', 
-  `sku_id` varchar(255) NOT NULL DEFAULT '0' COMMENT 'skuid',
-  `qty` int  DEFAULT '1' COMMENT 'item quantity', 
-  `status` int unsigned DEFAULT '0' COMMENT '0: not pay 1:paid 2:removed', 
-  `remark` varchar(255) DEFAULT '' COMMENT 'remark',
-  PRIMARY KEY (`id`) USING BTREE,
-  FOREIGN KEY (`sku_id`) REFERENCES `tp_good_sku`(`id`),
-  FOREIGN KEY (`user_id`) REFERENCES `tp_user`(`id`)
-) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC COMMENT 'for each item in the cart will only have one record with status 0';
-
 DROP TABLE IF EXISTS `tp_cate`;
 CREATE TABLE `tp_cate` (
   `id` int unsigned NOT NULL AUTO_INCREMENT, 
@@ -91,16 +78,6 @@ CREATE TABLE `tp_user_coupon` (
   FOREIGN KEY (`coupon_id`) REFERENCES `tp_coupon`(`id`)
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC COMMENT 'record of user coupon';
 
-DROP TABLE IF EXISTS `tp_favourite`;
-CREATE TABLE `tp_favourite` (
-  `user_id` int NOT NULL COMMENT 'user id', 
-  `good_id` int NOT NULL COMMENT 'good id', 
-  `add_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'item add date', 
-  PRIMARY KEY (`user_id`,`good_id`) USING BTREE,
-  FOREIGN KEY (`user_id`) REFERENCES `tp_user`(`id`),
-  FOREIGN KEY (`good_id`) REFERENCES `tp_user`(`id`)
-) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
-
 DROP TABLE IF EXISTS `tp_good`;
 CREATE TABLE `tp_good` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'good id',
@@ -118,7 +95,7 @@ CREATE TABLE `tp_good` (
   `is_del` int DEFAULT '1' COMMENT '0: available 1: not available', 
   `low_stock_alert` int unsigned DEFAULT '0' COMMENT 'alert show in admin panel when the item qty reach the number',
   `desc` text COMMENT 'good description in json format',
-  `is_recommanded` tinyint unsigned DEFAULT '0' COMMENT 'good is recommend on the home page', 
+  `is_recommended` tinyint unsigned DEFAULT '0' COMMENT 'good is recommend on the home page', 
   `sku_id` varchar(45) DEFAULT NULL COMMENT 'main good sku id',
   `is_new` tinyint NOT NULL DEFAULT '0' COMMENT 'is new item',
   `is_variation` varchar(100) NOT NULL DEFAULT 'false' COMMENT 'muti type item', 
@@ -436,6 +413,30 @@ CREATE TABLE `tp_user_address` (
   FOREIGN KEY(`area_id`) REFERENCES `tp_sf_area`(`id`),
   FOREIGN KEY(sub_id) REFERENCES `tp_sf_sub_area`(`id`),
   FOREIGN KEY(location_id) REFERENCES `tp_sf_location`(`id`)
+) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+
+DROP TABLE IF EXISTS `tp_cart`;
+CREATE TABLE `tp_cart` (
+  `id` int NOT NULL AUTO_INCREMENT , 
+  `user_id` int NOT NULL COMMENT 'user id', 
+  `sku_id` varchar(255) NOT NULL DEFAULT '0' COMMENT 'skuid',
+  `qty` int  DEFAULT '1' COMMENT 'item quantity', 
+  `status` int unsigned DEFAULT '0' COMMENT '0: not pay 1:paid 2:removed', 
+  `remark` varchar(255) DEFAULT '' COMMENT 'remark',
+  PRIMARY KEY (`id`) USING BTREE,
+  FOREIGN KEY (`sku_id`) REFERENCES `tp_good_sku`(`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `tp_user`(`id`)
+) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC COMMENT 'for each item in the cart will only have one record with status 0';
+
+DROP TABLE IF EXISTS `tp_favourite`;
+CREATE TABLE `tp_favourite` (
+  `user_id` int NOT NULL COMMENT 'user id', 
+  `good_id` int NOT NULL COMMENT 'good id', 
+  `add_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'item add date', 
+  PRIMARY KEY (`user_id`,`good_id`) USING BTREE,
+  FOREIGN KEY (`user_id`) REFERENCES `tp_user`(`id`),
+  FOREIGN KEY (`good_id`) REFERENCES `tp_user`(`id`)
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 
