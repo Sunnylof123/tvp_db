@@ -199,7 +199,7 @@ CREATE TABLE `tp_order` (
     'cancelled',
     'refunded'
   ) DEFAULT 'unpaid' NOT NULL COMMENT 'order status',
-  `type` enum( 
+  `payment_method` enum( 
     'paypal',
     'other',
     'stripe',
@@ -397,7 +397,6 @@ CREATE TABLE `tp_user_address` (
   'mtr',
   'foreign'
   ) DEFAULT 'sf-express' COMMENT '运送方式。selfpick-up【客人到取】, sf-express【順豐快遞（智能自取櫃 + 送貨上門）】, direct【公司直送】, metro【地鐵交收】, foreign【海外寄貨】',
-  `send_type` tinyint DEFAULT '0' COMMENT '1【自取】2【上门】', 
   `area_id` int DEFAULT NULL COMMENT '区域', 
   `sub_id` int DEFAULT NULL COMMENT 'reference tp_sf_sub', 
   `location_id` int DEFAULT NULL COMMENT 'sf localtion id', 
