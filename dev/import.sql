@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS `tp_admin`;
 CREATE TABLE `tp_admin` (
- `id` int NOT NULL AUTO_INCREMENT ,
+ `admin_id` int NOT NULL AUTO_INCREMENT ,
   `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
   `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
   `add_date` datetime DEFAULT NULL, 
@@ -98,7 +98,7 @@ CREATE TABLE `tp_good` (
   `is_recommended` tinyint unsigned DEFAULT '0' COMMENT 'good is recommend on the home page', 
   `sku_id` varchar(45) DEFAULT NULL COMMENT 'main good sku id',
   `is_new` tinyint NOT NULL DEFAULT '0' COMMENT 'is new item',
-  `is_variation` varchar(100) NOT NULL DEFAULT 'false' COMMENT 'muti type item', 
+  `is_variation` tinyint DEFAULT '0' COMMENT 'muti type item', 
   `crm_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' COMMENT 'crm good id',
   `odoo_product_code` varchar(45) DEFAULT NULL COMMENT 'odoo good id',
   `type` varchar(1) DEFAULT 'g' COMMENT 'item type g: good c: course',
@@ -362,9 +362,7 @@ CREATE TABLE `tp_pcset` (
   `id` int NOT NULL AUTO_INCREMENT,
   `whatsapp` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `work_time` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `work_time_value` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
-  `workDate` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `workDateValue` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
+  `work_date` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `address` text ,
   `phone` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `company_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL, 
@@ -439,3 +437,11 @@ CREATE TABLE `tp_favourite` (
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 
+DROP TABLE IF EXISTS `tp_good_cate`;
+CREATE TABLE `tp_good_cate` (
+ `good_id` int NOT NULL,
+ `cate_id` int unsigned NOT NULL,
+ PRIMARY KEY (`good_id`, `cate_id`)
+ FOREIGN KEY (`good_id`) REFERENCES `tp_good`(`id`),
+ FOREIGN KEY (`cate_id`) REFERENCES `tp_cate`(`id`)
+) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;

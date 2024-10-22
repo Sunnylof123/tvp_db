@@ -18,7 +18,7 @@ CREATE TABLE `tp_admin` (
   -- `account_id` varchar(45) DEFAULT NULL, --[REMOVE]
   -- `branch_id` int unsigned DEFAULT '0' COMMENT '所属分店。默认0【全部分店】', --[REMOVE]
   -- `rand` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '', --[REMOVE]
-  `id` int NOT NULL AUTO_INCREMENT ,
+  `admin_id` int NOT NULL AUTO_INCREMENT ,
   `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
   `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
   `add_date` datetime DEFAULT NULL, --[UPDATE ORIGN addDate]
@@ -105,7 +105,7 @@ CREATE TABLE `tp_cate` (
   -- `rand` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '',
   -- `sort` int unsigned DEFAULT '0', --[REMOVE]
   -- `status` int unsigned DEFAULT '0', --[REMOVE]
-  `id` int unsigned NOT NULL AUTO_INCREMENT, --[UPDATE ORIGN cateId]
+  `id` int unsigned not null AUTO_INCREMENT, --[UPDATE ORIGN cateId]
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'category name', --JSON FORMAT
   `parent_id` int DEFAULT '0' COMMENT 'parent  0: not parenet else: other category', --[UPDATE ORIGN pid]
   `desc` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT 'category description in json format', --[UPDATE ORIGN cateDesc]
@@ -227,7 +227,7 @@ CREATE TABLE `tp_good` (
   `is_recommended` tinyint unsigned DEFAULT '0' COMMENT 'good is recommend on the home page', --[UPDATE ORIGN isHomeRecommand]
   `sku_id` varchar(45) DEFAULT NULL COMMENT 'main good sku id',
   `is_new` tinyint NOT NULL DEFAULT '0' COMMENT 'is new item',
-  `is_variation` varchar(100) NOT NULL DEFAULT 'false' COMMENT 'muti type item', --[UPDATE ORIGN isVariationPresent]
+  `is_variation` tinyint  DEFAULT '0' COMMENT 'muti type item', --[UPDATE ORIGN isVariationPresent]
   `crm_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' COMMENT 'crm good id',
   `odoo_product_code` varchar(45) DEFAULT NULL COMMENT 'odoo good id',
   `type` varchar(1) DEFAULT 'g' COMMENT 'item type g: good c: course',
@@ -724,3 +724,11 @@ CREATE TABLE `tp_user_address` (
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 
+DROP TABLE IF EXISTS `tp_good_cate`;
+CREATE TABLE `tp_good_cate` (
+ `good_id` int NOT NULL,
+ `cate_id` int unsigned NOT NULL,
+ PRIMARY KEY (`good_id`, `cate_id`)
+ FOREIGN KEY (`good_id`) REFERENCES `tp_good`(`id`),
+ FOREIGN KEY (`cate_id`) REFERENCES `tp_cate`(`id`)
+) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
