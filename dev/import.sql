@@ -1,3 +1,5 @@
+SET FOREIGN_KEY_CHECKS=0;
+
 DROP TABLE IF EXISTS `tp_admin`;
 CREATE TABLE `tp_admin` (
  `admin_id` int NOT NULL AUTO_INCREMENT ,
@@ -5,8 +7,8 @@ CREATE TABLE `tp_admin` (
   `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
   `add_date` datetime DEFAULT NULL, 
   `is_del` int unsigned  DEFAULT '0', 
-  `is_super` tinyint unsigned DEFAULT '0' COMMENT 'allow delete or not',
-  PRIMARY KEY (`id`) USING BTREE
+  `permission` int DEFAULT(0xFFFFFFFF) NOT NULL,
+  PRIMARY KEY (`admin_id`) USING BTREE
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC COMMENT 'this table is seperate from the user table';
 
 DROP TABLE IF EXISTS `tp_banner`;
@@ -62,21 +64,6 @@ CREATE TABLE `tp_coupon` (
   `add_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC ;
-
-DROP TABLE IF EXISTS `tp_user_coupon`;
-CREATE TABLE `tp_user_coupon` (
-  `id` int NOT NULL AUTO_INCREMENT COMMENT 'coupon record id',
-  `user_id` int DEFAULT NULL COMMENT 'user id', 
-  `coupon_id` int DEFAULT NULL COMMENT 'coupon id', 
-  `used_date` timestamp NULL DEFAULT NULL COMMENT 'coupong used date', 
-  `add_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'coupon add date', 
-  `status` int DEFAULT '0' COMMENT '0: not use 1: processing 2: used',
-  `order_id` int NOT NULL COMMENT 'coupon used on order', 
-  CHECK(`status` IN (0, 1, 2)),
-  PRIMARY KEY (`id`) USING BTREE,
-  FOREIGN KEY (`user_id`) REFERENCES `tp_user`(`id`),
-  FOREIGN KEY (`coupon_id`) REFERENCES `tp_coupon`(`id`)
-) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC COMMENT 'record of user coupon';
 
 DROP TABLE IF EXISTS `tp_good`;
 CREATE TABLE `tp_good` (
@@ -163,6 +150,67 @@ CREATE TABLE `tp_sf_location` (
   FOREIGN KEY (`sub_id`) REFERENCES `tp_sf_sub_area`(`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC COMMENT 'location for sf pickup';
 
+DROP TABLE IF EXISTS `tp_promote`;
+CREATE TABLE `tp_promote` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `subtitle` varchar(255) NOT NULL,
+  `link_url` varchar(255) NOT NULL,
+  `pic_urls` text,
+  `is_del` int DEFAULT '1' COMMENT '0: 刪除 1:可用', 
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+DROP TABLE IF EXISTS `tp_score`;
+CREATE TABLE `tp_score` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL, 
+  `score` int NOT NULL,
+  `year` VARCHAR(4) NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  FOREIGN KEY(user_id) REFERENCES `tp_user`(`id`)
+) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+DROP TABLE IF EXISTS `tp_score_log`;
+CREATE TABLE `tp_score_log` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `add_date` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP, 
+  `score` int NOT NULL,
+  `spend_score` int DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  FOREIGN KEY(user_id) REFERENCES `tp_user`(`id`)
+
+) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+
+DROP TABLE IF EXISTS `tp_user`;
+CREATE TABLE `tp_user` (
+  `id` int NOT  NULL AUTO_INCREMENT COMMENT 'user id',
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT 'user email',
+  `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT 'user password',
+  `reg_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'user register date', 
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' COMMENT 'user name',
+  `user_type` tinyint NOT NULL DEFAULT '1' COMMENT 'user type', 
+  `tel` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT 'user phone number',
+  `sex` int DEFAULT NULL COMMENT 'user gender',
+  `address` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' COMMENT 'user address', 
+  `icon` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' COMMENT 'user icon', 
+  `vip_level` int DEFAULT '0' COMMENT 'user vip level', 
+  `stripe_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'user stripe pay id', 
+  `platform` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'register platform (e.g web, android, ios etc.. maybe)',
+  `platform_key` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'platform login key', 
+  `is_del` int unsigned  DEFAULT '0' COMMENT 'is the user deleted', 
+  `invite_user_id` int NULL  COMMENT 'invite by other users id',
+  `crm_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' COMMENT 'crm user id',
+  `odoo_customer_code` varchar(45) DEFAULT NULL COMMENT 'odoo customer code',
+  `is_odoo_sync` int unsigned NOT NULL DEFAULT '0' COMMENT 'is odoo sync-ed', 
+  `odoo_id` int DEFAULT NULL COMMENT 'odoo user id',
+  `is_verified` int NOT NULL DEFAULT '0' COMMENT 'is user verified by code', 
+  PRIMARY KEY (`id`) USING BTREE,
+  FOREIGN KEY (`invite_user_id`) REFERENCES `tp_user`(`id`)
+) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
 DROP TABLE IF EXISTS `tp_order`;
 CREATE TABLE `tp_order` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'order id',
@@ -235,66 +283,22 @@ CREATE TABLE `tp_order_item` (
   FOREIGN KEY (`sku_id`) REFERENCES `tp_good_sku`(`id`)
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
-DROP TABLE IF EXISTS `tp_promote`;
-CREATE TABLE `tp_promote` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) NOT NULL,
-  `subtitle` varchar(255) NOT NULL,
-  `link_url` varchar(255) NOT NULL,
-  `pic_urls` text,
-  `is_del` int DEFAULT '1' COMMENT '0: 刪除 1:可用', 
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
-DROP TABLE IF EXISTS `tp_score`;
-CREATE TABLE `tp_score` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL, 
-  `score` int NOT NULL,
-  `year` VARCHAR(4) NOT NULL,
+DROP TABLE IF EXISTS `tp_user_coupon`;
+CREATE TABLE `tp_user_coupon` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'coupon record id',
+  `user_id` int DEFAULT NULL COMMENT 'user id', 
+  `coupon_id` int DEFAULT NULL COMMENT 'coupon id', 
+  `used_date` timestamp NULL DEFAULT NULL COMMENT 'coupong used date', 
+  `add_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'coupon add date', 
+  `status` int DEFAULT '0' COMMENT '0: not use 1: processing 2: used',
+  `order_id` int NOT NULL COMMENT 'coupon used on order', 
+  CHECK(`status` IN (0, 1, 2)),
   PRIMARY KEY (`id`) USING BTREE,
-  FOREIGN KEY(user_id) REFERENCES `tp_user`(`id`)
-) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+  FOREIGN KEY (`user_id`) REFERENCES `tp_user`(`id`),
+  FOREIGN KEY (`coupon_id`) REFERENCES `tp_coupon`(`id`)
+) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC COMMENT 'record of user coupon';
 
-DROP TABLE IF EXISTS `tp_score_log`;
-CREATE TABLE `tp_score_log` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `add_date` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP, 
-  `score` int NOT NULL,
-  `spend_score` int DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  FOREIGN KEY(user_id) REFERENCES `tp_user`(`id`)
-
-) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
-
-
-DROP TABLE IF EXISTS `tp_user`;
-CREATE TABLE `tp_user` (
-  `id` int NOT  NULL AUTO_INCREMENT COMMENT 'user id',
-  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT 'user email',
-  `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT 'user password',
-  `reg_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'user register date', 
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' COMMENT 'user name',
-  `user_type` tinyint NOT NULL DEFAULT '1' COMMENT 'user type', 
-  `tel` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT 'user phone number',
-  `sex` int DEFAULT NULL COMMENT 'user gender',
-  `address` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' COMMENT 'user address', 
-  `icon` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' COMMENT 'user icon', 
-  `vip_level` int DEFAULT '0' COMMENT 'user vip level', 
-  `stripe_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'user stripe pay id', 
-  `platform` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'register platform (e.g web, android, ios etc.. maybe)',
-  `platform_key` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'platform login key', 
-  `is_del` int unsigned  DEFAULT '0' COMMENT 'is the user deleted', 
-  `invite_user_id` int NULL  COMMENT 'invite by other users id',
-  `crm_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' COMMENT 'crm user id',
-  `odoo_customer_code` varchar(45) DEFAULT NULL COMMENT 'odoo customer code',
-  `is_odoo_sync` int unsigned NOT NULL DEFAULT '0' COMMENT 'is odoo sync-ed', 
-  `odoo_id` int DEFAULT NULL COMMENT 'odoo user id',
-  `is_verified` int NOT NULL DEFAULT '0' COMMENT 'is user verified by code', 
-  PRIMARY KEY (`id`) USING BTREE,
-  FOREIGN KEY (`invite_user_id`) REFERENCES `tp_user`(`id`)
-) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 DROP TABLE IF EXISTS `tp_booking`;
 CREATE TABLE `tp_booking` (
@@ -441,7 +445,9 @@ DROP TABLE IF EXISTS `tp_good_cate`;
 CREATE TABLE `tp_good_cate` (
  `good_id` int NOT NULL,
  `cate_id` int unsigned NOT NULL,
- PRIMARY KEY (`good_id`, `cate_id`)
+ PRIMARY KEY (`good_id`, `cate_id`),
  FOREIGN KEY (`good_id`) REFERENCES `tp_good`(`id`),
  FOREIGN KEY (`cate_id`) REFERENCES `tp_cate`(`id`)
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+SET FOREIGN_KEY_CHECKS=1;
