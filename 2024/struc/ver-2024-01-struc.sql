@@ -429,7 +429,7 @@ CREATE TABLE `tp_pcset` (
   `work_date` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `address` text COLLATE utf8mb4_general_ci,
   `phone` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `company_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `company_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `facebook` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `instagram` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `fax` varchar(110) COLLATE utf8mb4_general_ci DEFAULT NULL,
