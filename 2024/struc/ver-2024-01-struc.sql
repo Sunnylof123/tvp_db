@@ -139,7 +139,8 @@ CREATE TABLE `tp_cate` (
   `is_del` int DEFAULT '0' COMMENT '0: available 1: not available',
   `crm_id` char(36) COLLATE utf8mb4_general_ci DEFAULT '' COMMENT 'crm id',
   `type` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'g' COMMENT 'item type g: good b: booking',
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE,
+  CONSTRAINT `tp_cate_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `tp_cate` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
