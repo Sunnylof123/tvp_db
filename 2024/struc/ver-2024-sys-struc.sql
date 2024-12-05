@@ -133,7 +133,7 @@ DROP TABLE IF EXISTS `tp_cate`;
 CREATE TABLE `tp_cate` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'category name',
-  `parent_id` int DEFAULT '0' COMMENT 'parent  0: not parenet else: other category',
+  `parent_id` int unsigned DEFAULT NULL COMMENT 'parent  0: not parenet else: other category',
   `desc` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT 'category description in json format',
   `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '',
   `is_del` int DEFAULT '0' COMMENT '0: available 1: not available',
