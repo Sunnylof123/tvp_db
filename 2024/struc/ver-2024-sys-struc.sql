@@ -223,7 +223,7 @@ CREATE TABLE `tp_good` (
   `width` int unsigned DEFAULT '0' COMMENT 'good width',
   `height` int unsigned DEFAULT '0' COMMENT 'good height',
   `stock` int DEFAULT '0' COMMENT 'good stocking',
-  `is_del` int DEFAULT '1' COMMENT '0: available 1: not available',
+  `is_del` int DEFAULT '0' COMMENT '0: available 1: not available',
   `low_stock_alert` int unsigned DEFAULT '0' COMMENT 'alert show in admin panel when the item qty reach the number',
   `desc` text COLLATE utf8mb4_general_ci COMMENT 'good description in json format',
   `is_recommended` tinyint unsigned DEFAULT '0' COMMENT 'good is recommend on the home page',
